@@ -12,7 +12,7 @@ class User
         $db = Db::getConnection();
         $usersList = array();
 
-        $result = $db->query("SELECT id, name, surname FROM Users LIMIT " . self::CONSTANT . " OFFSET $offset");
+        $result = $db->query("SELECT id, name, surname FROM Users ORDER BY id DESC LIMIT " . self::CONSTANT . " OFFSET $offset");
 
         $i = 0;
         while ($row = $result->fetch()) {
