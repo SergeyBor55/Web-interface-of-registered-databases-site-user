@@ -19,6 +19,7 @@
 * Web-сервер: Apache, 
 * PHP 7.
 * HTML и CSS
+* паттерн MVC 
 
 **Адрес страницы авторизации: http://users/login**
 
