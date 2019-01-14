@@ -3,50 +3,49 @@
 class CheckUser
 {
 
-    public static function checkLengthNameSurnameLogin($name, $surname, $login)
+    public static function checkLengthNameSurnameLogin($options)
     {
-        if (strlen($name) >= 2 and strlen($surname) >= 2 and strlen($login) >= 2) {
+        if (strlen($options['name']) >= 2 and strlen($options['surname']) >= 2 and strlen($options['login']) >= 2) {
             return true;
         }
         return false;
     }
 
 
-    public static function checkPassword($password)
+    public static function checkPassword($options)
     {
-        if (strlen($password) >= 6) {
+        if (strlen($options['password']) >= 6) {
             return true;
         }
         return false;
     }
 
 
-    public static function checkDate($date)
+    public static function checkDate($options)
     {
-        if (preg_match('/\d{4}(-|\/)\d{2}\1\d{2}/', $date) == 1) {
+        if (preg_match('/\d{4}(-|\/)\d{2}\1\d{2}/', $options['date']) == 1) {
             return true;
         }
         return false;
     }
 
 
-    public static function checkUserDate($value)
+    public static function checkUserDate($options)
     {
-        $value = trim($value);
-        $value = stripslashes($value);
-        $value = strip_tags($value);
-        $value = htmlspecialchars($value);
+        $options =  array_map("stripslashes", $options);
+        $options =  array_map("htmlentities", $options);
+        $options =  array_map("trim", $options);
 
-        return $value;
+        return $options;
     }
 
 
     //Check existence login in database
-    public static function checkExistenceLogin($login)
+    public static function checkExistenceLogin($options)
     {
         $db = Db::getConnection();
         $result = $db->prepare('SELECT login FROM Users WHERE login = :login');
-        $result->bindParam(':login', $login, PDO::PARAM_STR);
+        $result->bindParam(':login', $options['login'], PDO::PARAM_STR);
         $result->execute();
         $result->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -55,17 +54,14 @@ class CheckUser
 
 
     //Check registered login in database
-    public static function checkRegisteredUser($login)
+    public static function checkRegisteredUser($options)
     {
-
         $db = Db::getConnection();
         $sql = 'SELECT * FROM Users WHERE login = :login';
         $result = $db->prepare($sql);
-        $result->bindParam(':login', $login, PDO::PARAM_INT);
-
+        $result->bindParam(':login', $options['login'], PDO::PARAM_INT);
         $result->execute();
         $result->setFetchMode(PDO::FETCH_ASSOC);
-
         $user = $result->fetch();
 
         if ($user) {
