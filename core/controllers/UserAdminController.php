@@ -22,48 +22,31 @@ class UserAdminController extends AdminBase
     {
         self::checkAdmin();
 
-        $name = '';
-        $surname = '';
-        $login = '';
-        $password = '';
-        $gender = '';
-        $date = '';
+        $options = User::arrayForForms();
 
         if (isset($_POST['submit'])) {
-            $name = $_POST['name'];
-            $name = CheckUser::checkUserDate($name);
-            $surname = $_POST['surname'];
-            $surname = CheckUser::checkUserDate($surname);
-            $login = $_POST['login'];
-            $login = CheckUser::checkUserDate($login);
-            $password = $_POST['password'];
-            $password = CheckUser::checkUserDate($password);
-            $gender = $_POST['gender'];
-            $gender = CheckUser::checkUserDate($gender);
-            $date = $_POST['date'];
-            $date = CheckUser::checkUserDate($date);
             $errors = false;
+            $options = $_POST;
+            $options = CheckUser::checkUserDate($options);
 
-            if (!CheckUser::checkLengthNameSurnameLogin($name, $surname, $login)) {
-                $errors[] = 'Name, surname or login must be at least 2 characters long';
+            if (!CheckUser::checkLengthNameSurnameLogin($options)) {
+               $errors[] = 'Name, surname or login must be at least 2 characters long';
             }
 
-            if (!CheckUser::checkPassword($password)) {
+            if (!CheckUser::checkPassword($options)) {
                 $errors[] = 'Password must be at least 6 characters long';
             }
 
-            if (!CheckUser::checkDate($date)) {
+            if (!CheckUser::checkDate($options)) {
                 $errors[] = 'Date not entered correctly';
             }
 
-            if (CheckUser::checkExistenceLogin($login)) {
+            if (CheckUser::checkExistenceLogin($options)) {
                 $errors[] = 'This login already exists';
-            }
+           }
 
             if ($errors == false) {
-                $name = ucfirst($name);
-                $surname = ucfirst($surname);
-                User::createUser($name, $surname, $login, $password, $gender, $date);
+                User::createUser($options);
                 header('Location: /users/page-1');
             }
         }
@@ -95,44 +78,35 @@ class UserAdminController extends AdminBase
 
         $user = User::getUserById($id);
 
-        if (isset($_POST['submit'])) {
-            $name = $_POST['name'];
-            $name = CheckUser::checkUserDate($name);
-            $surname = $_POST['surname'];
-            $surname = CheckUser::checkUserDate($surname);
-            $login = $_POST['login'];
-            $login = CheckUser::checkUserDate($login);
-            $password = $_POST['password'];
-            $password = CheckUser::checkUserDate($password);
-            $gender = $_POST['gender'];
-            $gender = CheckUser::checkUserDate($gender);
-            $date = $_POST['date'];
-            $date = CheckUser::checkUserDate($date);
+         if (isset($_POST['submit'])) {
             $errors = false;
+            $options = $_POST;
+            $options = CheckUser::checkUserDate($options);
 
-            if (!CheckUser::checkLengthNameSurnameLogin($name, $surname, $login)) {
+            if (!CheckUser::checkLengthNameSurnameLogin($options)) {
                 $errors[] = 'Name, surname or login must be at least 2 characters long';
             }
 
-            if (!CheckUser::checkPassword($password)) {
+            if (!CheckUser::checkPassword($options)) {
                 $errors[] = 'Password must be at least 6 characters long';
             }
 
-            if (!CheckUser::checkDate($date)) {
+            if (!CheckUser::checkDate($options)) {
                 $errors[] = 'Date not entered correctly';
             }
 
-            if($login != $user['login']) {
-                if (CheckUser::checkExistenceLogin($login)) {
+            if (CheckUser::checkExistenceLogin($options)) {
+                $errors[] = 'This login already exists';
+            }
+
+            if($options['login'] != $user['login']) {
+                if (CheckUser::checkExistenceLogin($options)) {
                     $errors[] = 'This login already exists';
                 }
             }
 
-
             if ($errors == false) {
-                $name = ucfirst($name);
-                $surname = ucfirst($surname);
-                User::updateUser($id, $name, $surname, $login, $password, $gender, $date);
+                User::updateUser($id, $options);
                 header('Location: /users/page-1');
             }
         }
