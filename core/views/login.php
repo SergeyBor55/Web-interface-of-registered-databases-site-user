@@ -3,10 +3,10 @@
         <h3>Authentication</h3><br>
         <form class="contact" action="#" method="POST">
             <label>Login<br>
-                <input type="text" name="login" placeholder="smith2000" value="<?= $login ?>"
+                <input type="text" name="login" placeholder="smith2000" value="<?= $options['login'] ?>"
                        required="required"></label><br>
             <label>Password<br>
-                <input type="password" name="password" value="<?= $password ?>"></label><br>
+                <input type="password" name="password" value="<?= $options['password'] ?>" required="required"></label><br>
             <input type="submit" name="submit" value="Enter"><br>
         </form>
         <?php
