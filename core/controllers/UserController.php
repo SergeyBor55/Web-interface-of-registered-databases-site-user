@@ -5,49 +5,32 @@ class UserController
 
     public function actionRegistration()
     {
-
-        $name = '';
-        $surname = '';
-        $login = '';
-        $password = '';
-        $gender = '';
-        $date = '';
+        $options = User::arrayForForms();
         $result = false;
 
         if (isset($_POST['submit'])) {
-            $name = $_POST['name'];
-            $name = CheckUser::checkUserDate($name);
-            $surname = $_POST['surname'];
-            $surname = CheckUser::checkUserDate($surname);
-            $login = $_POST['login'];
-            $login = CheckUser::checkUserDate($login);
-            $password = $_POST['password'];
-            $password = CheckUser::checkUserDate($password);
-            $gender = $_POST['gender'];
-            $gender = CheckUser::checkUserDate($gender);
-            $date = $_POST['date'];
-            $date = CheckUser::checkUserDate($date);
-
+            $options = $_POST;
+            $options = CheckUser::checkUserDate($options);
             $errors = false;
 
-            if (!CheckUser::checkLengthNameSurnameLogin($name, $surname, $login)) {
+            if (!CheckUser::checkLengthNameSurnameLogin($options)) {
                 $errors[] = 'Name, surname or login must be at least 2 characters long';
             }
 
-            if (!CheckUser::checkPassword($password)) {
+            if (!CheckUser::checkPassword($options)) {
                 $errors[] = 'Password must be at least 6 characters long';
             }
 
-            if (!CheckUser::checkDate($date)) {
+            if (!CheckUser::checkDate($options)) {
                 $errors[] = 'Date not entered correctly';
             }
 
-            if (CheckUser::checkExistenceLogin($login)) {
+            if (CheckUser::checkExistenceLogin($options)) {
                 $errors[] = 'This login already exists';
             }
 
             if ($errors == false) {
-                $result = User::addUser($login, $name, $surname, $password, $gender, $date);
+                $result = User::addUser($options);
             }
         }
 
@@ -57,28 +40,17 @@ class UserController
 
     public function actionLogin()
     {
-        $login = '';
-        $password = '';
+        $options = User::arrayForForms();
 
         if (isset($_POST['submit'])) {
-            $login = $_POST['login'];
-            $login = CheckUser::checkUserDate($login);
-            $password = $_POST['password'];
-            $password = CheckUser::checkUserDate($password);
+            $options = $_POST;
+            $options = CheckUser::checkUserDate($options);
             $errors = false;
 
-            if (strlen($login) < 2) {
-                $errors[] = 'Login is not entered correctly';
-            }
+            $user = CheckUser::checkRegisteredUser($options);
 
-            if (!CheckUser::checkPassword($password)) {
-                $errors[] = 'Password mast be at list 6 characters long';
-            }
-
-            $user = CheckUser::checkRegisteredUser($login);
-
-            if (!$user || (!password_verify($password, $user['password']))) {
-                $errors[] = 'Name user and password is not entered correctly';
+            if (!$user || (!password_verify($options['password'], $user['password']))) {
+                $errors[] = 'Login user or password is not entered correctly';
             } else {
                 User::auth($user['id']);
                 header('Location: /admin');
