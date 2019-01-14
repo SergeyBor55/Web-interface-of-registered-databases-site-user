@@ -95,10 +95,6 @@ class UserAdminController extends AdminBase
                 $errors[] = 'Date not entered correctly';
             }
 
-            if (CheckUser::checkExistenceLogin($options)) {
-                $errors[] = 'This login already exists';
-            }
-
             if($options['login'] != $user['login']) {
                 if (CheckUser::checkExistenceLogin($options)) {
                     $errors[] = 'This login already exists';
