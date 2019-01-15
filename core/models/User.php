@@ -83,7 +83,7 @@ class User
 
     public static function deleteUserById($id)
     {
-
+        $id = intval($id);
         $db = Db::getConnection();
         $sql = 'DELETE  FROM Users WHERE id = :id';
         $result = $db->prepare($sql);
