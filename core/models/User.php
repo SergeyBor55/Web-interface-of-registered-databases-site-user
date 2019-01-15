@@ -37,6 +37,7 @@ class User
 
     public static function getUserById($id)
     {
+        $id = intval($id);
 
         $db = Db::getConnection();
         $sql = 'SELECT * FROM Users WHERE id = :id';
@@ -67,6 +68,7 @@ class User
 
     public static function updateUser($id, $options)
     {
+        $id = intval($id);
 
         $name = ucfirst($options['name']);
         $surname = ucfirst($options['surname']);
@@ -84,6 +86,7 @@ class User
     public static function deleteUserById($id)
     {
         $id = intval($id);
+        
         $db = Db::getConnection();
         $sql = 'DELETE  FROM Users WHERE id = :id';
         $result = $db->prepare($sql);
